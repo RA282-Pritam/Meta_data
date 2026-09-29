@@ -3,17 +3,36 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Orbis Performance Console</title>
+<title>META (AURUM) Console</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <style>
-:root{--bg:#0B0E17;--panel:#151B2C;--panel2:#1B2338;--line:#2A3350;--ink:#F3F5FA;--sub:#95A0BD;--faint:#5E6987;
---gold:#FFC145;--coral:#FF6B6B;--teal:#2EC4B6;--violet:#9B6BFF;--sky:#3FC1E9;--lime:#8CD867;--amber:#F4A259;--green:#2ED9A3;--red:#FF5D6C;--radius:12px;}
+:root{--bg:#FFFFFF;--panel:#FFFFFF;--panel2:#F1F4FA;--line:#E1E6F0;--ink:#182038;--sub:#5A6685;--faint:#8A94AE;
+--gold:#F5A400;--coral:#F0525B;--teal:#14A89B;--violet:#7C4DFF;--sky:#1E9FD0;--lime:#5DB33A;--amber:#E8853A;--green:#149E72;--red:#E03B4B;--radius:12px;--shadow:0 1px 3px rgba(24,32,56,.06);--shadow-h:0 8px 22px rgba(24,32,56,.14);}
 *{box-sizing:border-box}
-html,body{margin:0;padding:0;background:radial-gradient(1200px 700px at 10% -10%,#1A2340 0%,var(--bg) 45%) fixed,var(--bg);color:var(--ink);font-family:'Inter',system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+.card,.kpi,.filters,.tab,button,.f-field select,.f-field input{transition:box-shadow .18s ease,transform .18s ease,border-color .18s ease,background .18s ease,color .18s ease}
+.card,.kpi,.filters{box-shadow:var(--shadow)}
+.card:hover,.kpi:hover{box-shadow:var(--shadow-h);transform:translateY(-2px);border-color:#CBD3E6}
+.filters:hover{box-shadow:var(--shadow-h)}
+.tab:hover{color:var(--ink);background:var(--panel2)}
+button:hover{background:var(--panel2);border-color:var(--faint);transform:translateY(-1px)}
+button.primary:hover{background:linear-gradient(120deg,var(--gold),var(--coral));filter:brightness(1.06)}
+.f-field select:hover,.f-field input:hover{border-color:var(--faint)}
+.kpi .lbl .q:hover{background:var(--gold);color:#fff}
+table.rank tbody tr{cursor:pointer}
+tr:hover td{background:#EEF2FB}
+.chartbox canvas{cursor:crosshair}
+.ts-bar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:space-between;margin:0 0 10px}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:8px;overflow:hidden}
+.seg button{border:0;border-radius:0;padding:6px 12px;font-size:12px;background:#fff;transform:none!important}
+.seg button.on{background:linear-gradient(120deg,var(--gold),var(--coral));color:#1A0F04}
+.ts-stats{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.chip{background:var(--panel2);border:1px solid var(--line);border-radius:999px;padding:5px 12px;font-size:11.5px;color:var(--sub)}
+.chip b{color:var(--ink);font-weight:700}
+html,body{margin:0;padding:0;background:#FFFFFF;color:var(--ink);font-family:'Inter',system-ui,sans-serif;-webkit-font-smoothing:antialiased}
 body{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
 h1,h2,h3{font-family:'Manrope',system-ui,sans-serif}
 .wrap{max-width:1400px;margin:0 auto;padding:20px 24px 60px}
@@ -42,21 +61,28 @@ input[type=file]{display:none}
 .kpi{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:14px 16px;border-top:3px solid var(--kc,var(--gold))}
 .kpi .lbl{font-size:11px;color:var(--sub);font-weight:600;text-transform:uppercase;letter-spacing:.4px;display:flex;align-items:center;gap:5px}
 .kpi .lbl .q{width:14px;height:14px;border-radius:50%;background:var(--panel2);color:var(--faint);font-size:10px;display:inline-flex;align-items:center;justify-content:center;cursor:help}
-.kpi .val{font-family:'Manrope';font-size:22px;font-weight:800;margin-top:6px;color:var(--kc,var(--ink))}
+.kpi .val{font-family:'Manrope';font-size:22px;font-weight:800;margin-top:6px;color:var(--ink)}
 .kpi .trend{font-size:11px;margin-top:5px;color:var(--sub)}.trend.up{color:var(--green)!important}.trend.down{color:var(--red)!important}
 .tabs{margin-top:26px;display:flex;gap:4px;border-bottom:1px solid var(--line);flex-wrap:wrap}
 .tab{padding:10px 16px;font-size:13px;font-weight:600;color:var(--sub);cursor:pointer;border-bottom:2px solid transparent;user-select:none}
 .tab.active{color:var(--ink);border-image:linear-gradient(90deg,var(--gold),var(--coral)) 1}
 .view{display:none;margin-top:20px}.view.active{display:block}
 .grid2{display:grid;grid-template-columns:1.4fr 1fr;gap:14px}.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
-@media(max-width:900px){.grid2,.grid3{grid-template-columns:1fr}}
+.grid2.eq{grid-template-columns:1fr 1fr}
+.grid2>.card,.grid3>.card{min-width:0}
+@media(max-width:900px){.grid2,.grid3,.grid2.eq{grid-template-columns:1fr}}
 .card{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:16px;border-top:3px solid var(--kc,var(--line))}
 .card h3{font-size:13px;margin:0 0 12px}.card .sub{font-size:11px;color:var(--sub);margin:-8px 0 12px}
 .chartbox{position:relative;height:260px}
 table{width:100%;border-collapse:collapse;font-size:12.5px}.tablewrap{overflow-x:auto}
 th{text-align:left;color:var(--sub);font-weight:600;font-size:11px;text-transform:uppercase;padding:8px 10px;border-bottom:1px solid var(--line);white-space:nowrap;cursor:pointer}
 th:hover{color:var(--gold)}
-td{padding:9px 10px;border-bottom:1px solid #202836;white-space:nowrap}
+table.rank th{cursor:default}table.rank th:hover{color:var(--sub)}
+table.rank th.n,table.rank td.n{text-align:right}
+table.rank td.nm{max-width:170px;overflow:hidden;text-overflow:ellipsis}
+table.rank td.rk{color:var(--faint);font-weight:700;width:34px}
+.rank-empty{text-align:center;color:var(--sub);padding:18px 10px}
+td{padding:9px 10px;border-bottom:1px solid var(--line);white-space:nowrap}
 tr:hover td{background:var(--panel2)}
 .foot-note{margin-top:26px;font-size:11.5px;color:var(--faint);line-height:1.6}
 </style>
@@ -64,7 +90,7 @@ tr:hover td{background:var(--panel2)}
 <body>
 <div class="wrap">
   <header class="top">
-    <div class="brand"><div class="mark">TR</div><div><h1>Orbis Performance Console</h1><p>Premium marketing performance dashboard</p></div></div>
+    <div class="brand"><div class="mark">TR</div><div><h1>META (AURUM) Console</h1><p>META Marketing performance dashboard</p></div></div>
     <div class="actions">
       <input type="file" id="fileInput" accept=".xlsx,.csv">
       <button class="primary" id="btnUpload" style="display:none" onclick="document.getElementById('fileInput').click()">Upload File</button>
@@ -100,14 +126,17 @@ tr:hover td{background:var(--panel2)}
       <div class="tab" data-view="datewise">Date-wise Breakdown</div>
     </div>
     <div class="view active" id="view-overview">
-      <div class="grid2">
-        <div class="card" style="--kc:var(--teal)"><h3>Spend &amp; Leads Over Time</h3><div class="sub">Daily amount spent vs platform leads</div><div class="chartbox"><canvas id="chOverTime"></canvas></div></div>
-        <div class="card" style="--kc:var(--violet)"><h3>Audience Mix</h3><div class="sub">Share of leads by audience</div><div class="chartbox"><canvas id="chAudience"></canvas></div></div>
+      <div class="card" style="--kc:var(--teal)"><h3>Spend &amp; Leads Over Time</h3><div class="sub">Daily amount spent vs platform leads</div>
+        <div class="ts-bar"><div class="seg" id="tsMode"><button data-v="combo" class="on">Bars + Line</button><button data-v="line">Line</button><button data-v="area">Area</button></div>
+        <div class="seg" id="tsCum"><button data-v="0" class="on">Daily</button><button data-v="1">Cumulative</button></div></div>
+        <div class="chartbox" style="height:340px;"><canvas id="chOverTime"></canvas></div><div class="ts-stats" id="tsStats"></div></div>
+      <div class="grid2 eq" style="margin-top:14px;">
+        <div class="card" style="--kc:var(--teal)"><h3>Best Performing Creatives</h3><div class="sub">Ranked on Leads, CTR, CPL and spend efficiency together</div><div class="tablewrap"><table class="rank" id="tblTopCreatives"><thead><tr><th>Rank</th><th>Creative</th><th class="n">Leads</th><th class="n">Spend</th><th class="n">CTR</th><th class="n">CPL</th></tr></thead><tbody></tbody></table></div></div>
+        <div class="card" style="--kc:var(--violet)"><h3>Least Performing Creatives</h3><div class="sub">CTR below 1%, very high CPL and very few leads</div><div class="tablewrap"><table class="rank" id="tblWeakCreatives"><thead><tr><th>Rank</th><th>Creative</th><th class="n">Leads</th><th class="n">Spend</th><th class="n">CTR</th><th class="n">CPL</th></tr></thead><tbody></tbody></table></div></div>
       </div>
-      <div class="grid3" style="margin-top:14px;">
-        <div class="card" style="--kc:var(--coral)"><h3>Top Campaigns by Spend</h3><div class="chartbox" style="height:220px;"><canvas id="chTopCampaigns"></canvas></div></div>
-        <div class="card" style="--kc:var(--sky)"><h3>Creative Performance</h3><div class="chartbox" style="height:220px;"><canvas id="chCreative"></canvas></div></div>
-        <div class="card" style="--kc:var(--amber)"><h3>CPL by Module</h3><div class="chartbox" style="height:220px;"><canvas id="chModule"></canvas></div></div>
+      <div class="grid2 eq" style="margin-top:14px;">
+        <div class="card" style="--kc:var(--coral)"><h3>Best Performing Audience</h3><div class="sub">Ranked on Leads, CTR, CPL and spend efficiency together</div><div class="tablewrap"><table class="rank" id="tblTopAudience"><thead><tr><th>Rank</th><th>Audience</th><th class="n">Leads</th><th class="n">Spend</th><th class="n">CTR</th><th class="n">CPL</th></tr></thead><tbody></tbody></table></div></div>
+        <div class="card" style="--kc:var(--sky)"><h3>Least Performing Audience</h3><div class="sub">CTR below 1%, very high CPL and very few leads</div><div class="tablewrap"><table class="rank" id="tblWeakAudience"><thead><tr><th>Rank</th><th>Audience</th><th class="n">Leads</th><th class="n">Spend</th><th class="n">CTR</th><th class="n">CPL</th></tr></thead><tbody></tbody></table></div></div>
       </div>
     </div>
     <div class="view" id="view-audience"><div class="card" style="--kc:var(--violet)"><h3>Audience-wise Detail</h3><div class="sub">Click a column header to sort. All figures reflect active filters.</div>
@@ -300,25 +329,98 @@ function renderKPIs(){
 function groupBy(rows,key){const m=new Map();rows.forEach(r=>{let k=r[key];if(k instanceof Date)k=k.toISOString().slice(0,10);if(!m.has(k))m.set(k,[]);m.get(k).push(r);});return m;}
 function destroyChart(id){if(charts[id]){charts[id].destroy();delete charts[id];}}
 const PALETTE=['#FFC145','#3FC1E9','#FF6B6B','#8CD867','#9B6BFF','#FF6FB5','#2EC4B6','#F4A259'];
-const AX={ticks:{color:'#8B93A3'},grid:{color:'#222A38'}};
+const AX={ticks:{color:'#5A6685'},grid:{color:'#E5E9F2'}};
 function lineChart(id,labels,ds){destroyChart(id);charts[id]=new Chart(document.getElementById(id),{type:'line',data:{labels,datasets:ds.map((d,i)=>({...d,borderColor:PALETTE[i],backgroundColor:PALETTE[i]+'33',tension:.3,pointRadius:0,borderWidth:2}))},
-  options:{responsive:true,maintainAspectRatio:false,scales:{x:{ticks:{color:'#8B93A3',maxTicksLimit:8},grid:AX.grid},y:AX},plugins:{legend:{labels:{color:'#ECEFF4'}}}}});}
+  options:{responsive:true,maintainAspectRatio:false,scales:{x:{ticks:{color:'#5A6685',maxTicksLimit:8},grid:AX.grid},y:AX},plugins:{legend:{labels:{color:'#182038'}}}}});}
 function barChart(id,labels,data,h){destroyChart(id);charts[id]=new Chart(document.getElementById(id),{type:'bar',data:{labels,datasets:[{data,backgroundColor:PALETTE[0],borderRadius:4}]},
   options:{responsive:true,maintainAspectRatio:false,indexAxis:h?'y':'x',scales:{x:AX,y:AX},plugins:{legend:{display:false}}}});}
 function doughnutChart(id,labels,data){destroyChart(id);charts[id]=new Chart(document.getElementById(id),{type:'doughnut',data:{labels,datasets:[{data,backgroundColor:PALETTE,borderColor:'#151B2C',borderWidth:2}]},
-  options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom',labels:{color:'#ECEFF4',boxWidth:10,font:{size:10}}}}}});}
+  options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom',labels:{color:'#182038',boxWidth:10,font:{size:10}}}}}});}
 function fmtDateLabel(d){return new Date(d).toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'});}
+function esc(v){return String(v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+/* Spend & Leads Over Time — same date-wise aggregation (groupBy + agg), gap-filled, with view toggles */
+const TS={mode:'combo',cum:false,data:null};
+const crosshair={id:'xh',afterDatasetsDraw(c){const t=c.tooltip;if(t&&t.opacity&&t.dataPoints&&t.dataPoints.length){const x=t.dataPoints[0].element.x,{top,bottom}=c.chartArea,g=c.ctx;g.save();g.beginPath();g.moveTo(x,top);g.lineTo(x,bottom);g.strokeStyle='rgba(24,32,56,.25)';g.setLineDash([4,4]);g.stroke();g.restore();}}};
+function tsGrad(col){return ctx=>{const ch=ctx.chart,a=ch.chartArea;if(!a)return col+'33';const g=ch.ctx.createLinearGradient(0,a.top,0,a.bottom);g.addColorStop(0,col+'99');g.addColorStop(1,col+'08');return g;};}
+function drawTS(){
+  const d=TS.data;if(!d)return;const run=a=>{let t=0;return a.map(v=>t+=v);};
+  const sp=TS.cum?run(d.spend):d.spend,ld=TS.cum?run(d.leads):d.leads,keys=d.keys,many=keys.length>31,C1='#F59E0B',C2='#0E8FCB';
+  const line=(label,data,col,ax,fill)=>({type:'line',label,data,yAxisID:ax,borderColor:col,backgroundColor:fill?tsGrad(col):col+'22',fill:fill,tension:.35,borderWidth:2.5,pointRadius:many?0:3,pointHoverRadius:7,pointBackgroundColor:'#fff',pointBorderColor:col,pointBorderWidth:2,order:1});
+  const spendDs=TS.mode==='combo'?{type:'bar',label:'Spend (₹)',data:sp,yAxisID:'y',backgroundColor:tsGrad(C1),borderColor:C1,borderWidth:1,borderRadius:5,order:2}:line('Spend (₹)',sp,C1,'y',TS.mode==='area');
+  const leadDs=line('Leads',ld,C2,'y1',TS.mode==='area');
+  destroyChart('chOverTime');
+  charts.chOverTime=new Chart(document.getElementById('chOverTime'),{type:'bar',plugins:[crosshair],
+    data:{labels:keys.map(k=>fmtDateLabel(k).replace(/, \d{4}$/,'')),datasets:[spendDs,leadDs]},
+    options:{responsive:true,maintainAspectRatio:false,animation:{duration:900,easing:'easeOutQuart'},interaction:{mode:'index',intersect:false},
+      scales:{x:{ticks:{color:'#5A6685',maxTicksLimit:8},grid:{display:false}},
+        y:{position:'left',beginAtZero:true,title:{display:true,text:(TS.cum?'Cumulative ':'')+'Spend (₹)',color:'#5A6685'},ticks:{color:'#5A6685'},grid:AX.grid},
+        y1:{position:'right',beginAtZero:true,title:{display:true,text:(TS.cum?'Cumulative ':'')+'Leads',color:'#5A6685'},ticks:{color:'#5A6685',precision:0},grid:{drawOnChartArea:false}}},
+      plugins:{legend:{labels:{color:'#182038',usePointStyle:true}},
+        tooltip:{backgroundColor:'rgba(24,32,56,.95)',padding:10,callbacks:{title:i=>keys[i[0].dataIndex]?fmtDateLabel(keys[i[0].dataIndex]):'',
+          label:c=>c.dataset.yAxisID==='y'?' Spend: '+fmtMoney(c.parsed.y):' Leads: '+fmtInt(c.parsed.y)}}}}});
+  const pk=a=>{let m=0;a.forEach((v,i)=>{if(v>a[m])m=i;});return m;},n=keys.length||1;
+  const ps=pk(d.spend),pl=pk(d.leads),ts=d.spend.reduce((x,y)=>x+y,0),tl=d.leads.reduce((x,y)=>x+y,0);
+  document.getElementById('tsStats').innerHTML=keys.length?[
+    `Peak spend: <b>${fmtMoney(d.spend[ps])}</b> on ${fmtDateLabel(keys[ps])}`,
+    `Peak leads: <b>${fmtInt(d.leads[pl])}</b> on ${fmtDateLabel(keys[pl])}`,
+    `Avg / day: <b>${fmtMoney(ts/n)}</b> spend · <b>${fmtNum(tl/n,1)}</b> leads`].map(t=>`<span class="chip">${t}</span>`).join(''):'';
+}
+function renderTimeSeries(){
+  const byDate=groupBy(FILTERED,'date'),days=[...byDate.keys()].sort(),keys=[];
+  if(days.length){ // continuous calendar range so days with no rows show as 0 instead of being skipped
+    const last=new Date(days[days.length-1]+'T00:00:00Z');
+    for(let d=new Date(days[0]+'T00:00:00Z');d<=last;d=new Date(d.getTime()+86400000))keys.push(d.toISOString().slice(0,10));
+  }
+  TS.data={keys,spend:keys.map(k=>byDate.has(k)?agg(byDate.get(k)).spend:0),leads:keys.map(k=>byDate.has(k)?agg(byDate.get(k)).leads:0)};
+  drawTS();
+}
+[['tsMode',v=>TS.mode=v],['tsCum',v=>TS.cum=v==='1']].forEach(([id,fn])=>{const box=document.getElementById(id);
+  box.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;box.querySelectorAll('button').forEach(x=>x.classList.toggle('on',x===b));fn(b.dataset.v);drawTS();});});
+
+/* ---------- Creative / Audience ranking ----------
+   Metrics reuse agg() + safeDiv() (same CPL / CTR formulas as the KPIs and detail tables).
+   Each group is scored by percentile rank against the other groups in the current filtered view.
+   Performing score  = 30% High Leads + 25% High CTR + 25% Low CPL + 20% Low Spend
+   Non-performing    = 30% Low Leads  + 25% Low CTR  + 25% High CPL + 20% High Spend
+   Groups with no leads count as worst CPL; groups with no spend are ignored. */
+function pctRank(vals,higherBetter){ // 0 = worst, 1 = best; ties share an average rank
+  const n=vals.length;if(n<2)return vals.map(()=>0.5);
+  const v=vals.map(x=>isFinite(x)?x:(higherBetter?-Infinity:Infinity));
+  return v.map(x=>{let lt=0,eq=0;v.forEach(y=>{if(higherBetter?y<x:y>x)lt++;else if(y===x)eq++;});return (lt+(eq-1)/2)/(n-1);});
+}
+function rankGroups(key,limit){
+  const rows=[...groupBy(FILTERED,key).entries()].filter(([k])=>k!=='—'&&k!==null&&k!==undefined).map(([k,rs])=>{const a=agg(rs);
+    return{label:k,leads:a.leads,spend:a.spend,ctr:safeDiv(a.clicks,a.impressions)*100,cpl:safeDiv(a.spend,a.leads),cpc:safeDiv(a.spend,a.clicks)};}).filter(r=>r.spend>0);
+  if(!rows.length)return{top:[],weak:[]};
+  const leadsP=pctRank(rows.map(r=>r.leads),true),ctrP=pctRank(rows.map(r=>r.ctr),true),
+        cplP=pctRank(rows.map(r=>r.cpl),false),cpcP=pctRank(rows.map(r=>r.cpc),false),spendP=pctRank(rows.map(r=>r.spend),true);
+  rows.forEach((r,i)=>{
+    r.perf=0.30*leadsP[i]+0.25*ctrP[i]+0.25*cplP[i]+0.20*(1-spendP[i]);
+    r.weak=0.30*(1-leadsP[i])+0.25*(1-ctrP[i])+0.25*(1-cplP[i])+0.20*spendP[i];
+    r.bad=r.weak;
+  });
+  const tot=agg(FILTERED),avgCpl=safeDiv(tot.spend,tot.leads),avgCtr=safeDiv(tot.clicks,tot.impressions)*100;
+  const top=rows.filter(r=>r.leads>0&&r.perf>=0.5).sort((a,b)=>b.perf-a.perf||b.leads-a.leads).slice(0,limit);
+  const topKeys=new Set(top.map(r=>r.label));
+  const meanSpend=rows.reduce((t,r)=>t+r.spend,0)/rows.length;
+  const meanLeads=rows.reduce((t,r)=>t+r.leads,0)/rows.length;
+  // Least performing: ALL three must hold — CTR below 1%, CPL very high (>= 1.5x overall CPL, or no leads), leads very low (<= 50% of avg per group)
+  const WEAK_CTR=1.0,WEAK_CPL_X=1.5,WEAK_LEADS_X=0.5;
+  const weak=rows.filter(r=>!topKeys.has(r.label)&&r.spend>=0.25*meanSpend&&isFinite(r.ctr)&&r.ctr<WEAK_CTR&&(!isFinite(r.cpl)||r.cpl>=WEAK_CPL_X*avgCpl)&&r.leads<=WEAK_LEADS_X*meanLeads)
+    .sort((a,b)=>b.bad-a.bad||b.spend-a.spend).slice(0,limit);
+  return{top,weak};
+}
+function renderRankTable(id,rows){
+  const body=document.querySelector('#'+id+' tbody');
+  body.innerHTML=rows.length?rows.map((r,i)=>`<tr><td class="rk">${i+1}</td><td class="nm" title="${esc(r.label)}">${esc(r.label)}</td><td class="n">${fmtInt(r.leads)}</td><td class="n">${fmtMoney(r.spend)}</td><td class="n">${isFinite(r.ctr)?fmtNum(r.ctr,2)+'%':'—'}</td><td class="n">${isFinite(r.cpl)?fmtMoney(r.cpl):'—'}</td></tr>`).join('')
+    :'<tr><td colspan="6" class="rank-empty">No qualifying rows for the current filters.</td></tr>';
+}
 function renderOverview(){
-  const byDate=groupBy(FILTERED,'date'),days=[...byDate.keys()].sort();
-  lineChart('chOverTime',days.map(d=>fmtDateLabel(d).replace(/, \d{4}$/,'')),[{label:'Spend (₹)',data:days.map(d=>agg(byDate.get(d)).spend)},{label:'Leads',data:days.map(d=>agg(byDate.get(d)).leads)}]);
-  const aud=[...groupBy(FILTERED,'audience').entries()].map(([k,v])=>[k,agg(v).leads]).sort((a,b)=>b[1]-a[1]).slice(0,7);
-  doughnutChart('chAudience',aud.map(e=>e[0]),aud.map(e=>e[1]));
-  const camp=[...groupBy(FILTERED,'campaign').entries()].map(([k,v])=>[k,agg(v).spend]).sort((a,b)=>b[1]-a[1]).slice(0,6);
-  barChart('chTopCampaigns',camp.map(e=>e[0].length>24?e[0].slice(0,24)+'…':e[0]),camp.map(e=>e[1]),true);
-  const cre=[...groupBy(FILTERED,'creative').entries()].map(([k,v])=>[k,safeDiv(agg(v).spend,agg(v).leads)]).filter(e=>isFinite(e[1])).sort((a,b)=>a[1]-b[1]).slice(0,6);
-  barChart('chCreative',cre.map(e=>e[0].length>18?e[0].slice(0,18)+'…':e[0]),cre.map(e=>+e[1].toFixed(1)),true);
-  const mod=[...groupBy(FILTERED,'moduleId').entries()].map(([k,v])=>[k,safeDiv(agg(v).spend,agg(v).leads)]).filter(e=>isFinite(e[1]));
-  barChart('chModule',mod.map(e=>e[0]),mod.map(e=>+e[1].toFixed(1)),false);
+  const LIMIT=5;
+  const c=rankGroups('creative',LIMIT),a=rankGroups('audience',LIMIT);
+  renderRankTable('tblTopCreatives',c.top);renderRankTable('tblWeakCreatives',c.weak);
+  renderRankTable('tblTopAudience',a.top);renderRankTable('tblWeakAudience',a.weak);
+  renderTimeSeries();
 }
 const groupSortState={audienceTable:{k:'spend',dir:-1},creativeTable:{k:'spend',dir:-1},datewiseTable:{k:'label',dir:1}};
 function renderGroupTable(tableId,groupKey,fmt){
