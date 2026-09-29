@@ -3,21 +3,23 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Meta Performance Console</title>
+<title>Orbis Performance Console</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <style>
-:root{color-scheme:light;--bg:#FFFFFF;--panel:#FFFFFF;--panel2:#F4F6FC;--line:#E3E7F1;--ink:#171B2E;--sub:#667089;--faint:#97A0B8;--gold:#F5A800;--coral:#F0596B;--teal:#12A89A;--violet:#7C4DFF;--sky:#1E9FD0;--amber:#E8843A;--lime:#5DB33A;--green:#0FAE7E;--red:#E5384D;--radius:12px}
+:root{--bg:#0B0E17;--panel:#151B2C;--panel2:#1B2338;--line:#2A3350;--ink:#F3F5FA;--sub:#95A0BD;--faint:#5E6987;
+--gold:#FFC145;--coral:#FF6B6B;--teal:#2EC4B6;--violet:#9B6BFF;--sky:#3FC1E9;--lime:#8CD867;--amber:#F4A259;--green:#2ED9A3;--red:#FF5D6C;--radius:12px;}
 *{box-sizing:border-box}
-html,body{margin:0;padding:0;background:radial-gradient(900px 500px at 5% -5%,rgba(124,77,255,.10),transparent 60%),radial-gradient(800px 500px at 100% 0%,rgba(18,168,154,.10),transparent 60%),radial-gradient(900px 600px at 90% 100%,rgba(240,89,107,.09),transparent 60%),radial-gradient(700px 500px at 0% 100%,rgba(245,168,0,.10),transparent 60%) fixed;background-color:#FFFFFF;color:var(--ink);font-family:'Inter',system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+html,body{margin:0;padding:0;background:radial-gradient(1200px 700px at 10% -10%,#1A2340 0%,var(--bg) 45%) fixed,var(--bg);color:var(--ink);font-family:'Inter',system-ui,sans-serif;-webkit-font-smoothing:antialiased}
 body{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
 h1,h2,h3{font-family:'Manrope',system-ui,sans-serif}
 .wrap{max-width:1400px;margin:0 auto;padding:20px 24px 60px}
 header.top{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:18px 0 20px;border-bottom:1px solid var(--line);flex-wrap:wrap}
 .brand{display:flex;align-items:center;gap:12px}
-.brand .mark{width:38px;height:38px;border-radius:10px;background:linear-gradient(155deg,var(--teal),var(--violet));display:flex;align-items:center;justify-content:center;font-family:'Manrope';font-weight:800;color:#fff;font-size:16px}
+.brand .mark{width:38px;height:38px;border-radius:10px;background:linear-gradient(155deg,var(--teal),var(--violet));display:flex;align-items:center;justify-content:center;font-family:'Manrope';font-weight:800;color:#171008;font-size:16px}
 .brand h1{font-size:17px;font-weight:700;margin:0}.brand p{margin:1px 0 0;font-size:12px;color:var(--sub)}
 .actions{display:flex;gap:8px;flex-wrap:wrap}
 button{font-family:'Inter';cursor:pointer;border-radius:8px;border:1px solid var(--line);background:var(--panel2);color:var(--ink);padding:9px 14px;font-size:13px;font-weight:600}
@@ -27,201 +29,260 @@ button.ghost{background:transparent}button:disabled{opacity:.4;cursor:not-allowe
 input[type=file]{display:none}
 .status{margin-top:14px;font-size:13px;padding:10px 14px;border-radius:8px;display:none;gap:8px}
 .status.show{display:flex}
-.status.ok{background:rgba(46,217,163,.1);color:var(--green);border:1px solid rgba(46,217,163,.3)}
-.status.err{background:rgba(255,93,108,.1);color:var(--red);border:1px solid rgba(255,93,108,.3)}
+.status.ok{background:rgba(79,174,129,.1);color:var(--green);border:1px solid rgba(79,174,129,.3)}
+.status.err{background:rgba(224,104,90,.1);color:var(--red);border:1px solid rgba(224,104,90,.3)}
 .filters{margin-top:18px;background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:16px;display:flex;flex-wrap:wrap;gap:12px;align-items:flex-end}
 .f-field{display:flex;flex-direction:column;gap:5px;min-width:150px;flex:1}
 .f-field label{font-size:11px;color:var(--sub);font-weight:600;text-transform:uppercase;letter-spacing:.4px}
-.f-field select,.f-field input{background:var(--panel2);border:1px solid var(--line);color:var(--ink);border-radius:7px;padding:8px 9px;font-size:13px;font-family:'Inter';width:100%}
+.f-field select,.f-field input{background:var(--panel2);border:1px solid var(--line);color:var(--ink);border-radius:7px;padding:8px 9px;font-size:13px;width:100%}
 .f-btns{display:flex;gap:8px}
 .empty{margin-top:60px;text-align:center;color:var(--sub);padding:60px 20px;border:1px dashed var(--line);border-radius:var(--radius)}
-.empty h2{color:var(--ink);font-size:20px;margin-bottom:8px}.empty p{font-size:13px;max-width:420px;margin:0 auto}
+.empty h2{color:var(--ink);font-size:20px;margin-bottom:8px}.empty p{font-size:13px;max-width:440px;margin:0 auto}
 .kpis{margin-top:22px;display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px}
 .kpi{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:14px 16px;border-top:3px solid var(--kc,var(--gold))}
 .kpi .lbl{font-size:11px;color:var(--sub);font-weight:600;text-transform:uppercase;letter-spacing:.4px;display:flex;align-items:center;gap:5px}
 .kpi .lbl .q{width:14px;height:14px;border-radius:50%;background:var(--panel2);color:var(--faint);font-size:10px;display:inline-flex;align-items:center;justify-content:center;cursor:help}
 .kpi .val{font-family:'Manrope';font-size:22px;font-weight:800;margin-top:6px;color:var(--kc,var(--ink))}
 .kpi .trend{font-size:11px;margin-top:5px;color:var(--sub)}.trend.up{color:var(--green)!important}.trend.down{color:var(--red)!important}
-.tabs{margin-top:26px;display:flex;gap:4px;border-bottom:1px solid var(--line);overflow-x:auto}
-.tab{padding:10px 16px;font-size:13px;font-weight:600;color:var(--sub);cursor:pointer;border-bottom:2px solid transparent;user-select:none;white-space:nowrap}
-.tab.active{color:var(--ink);border-bottom-color:var(--gold)}
+.tabs{margin-top:26px;display:flex;gap:4px;border-bottom:1px solid var(--line);flex-wrap:wrap}
+.tab{padding:10px 16px;font-size:13px;font-weight:600;color:var(--sub);cursor:pointer;border-bottom:2px solid transparent;user-select:none}
+.tab.active{color:var(--ink);border-image:linear-gradient(90deg,var(--gold),var(--coral)) 1}
 .view{display:none;margin-top:20px}.view.active{display:block}
-.card{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:16px;border-top:3px solid var(--kc,var(--line));min-width:0}
-.card h3{font-size:13px;margin:0 0 12px;font-weight:700}
-.card .sub{font-size:11px;color:var(--sub);margin:-8px 0 12px}
+.grid2{display:grid;grid-template-columns:1.4fr 1fr;gap:14px}.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+@media(max-width:900px){.grid2,.grid3{grid-template-columns:1fr}}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:16px;border-top:3px solid var(--kc,var(--line))}
+.card h3{font-size:13px;margin:0 0 12px}.card .sub{font-size:11px;color:var(--sub);margin:-8px 0 12px}
 .chartbox{position:relative;height:260px}
-.grid2eq{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}
-@media(max-width:900px){.grid2eq{grid-template-columns:1fr}}
-table{width:100%;border-collapse:collapse;font-size:12.5px}
-.tablewrap{overflow-x:auto}
-th{text-align:left;color:var(--sub);font-weight:600;font-size:11px;text-transform:uppercase;letter-spacing:.3px;padding:8px 10px;border-bottom:1px solid var(--line);white-space:nowrap;cursor:pointer}
+table{width:100%;border-collapse:collapse;font-size:12.5px}.tablewrap{overflow-x:auto}
+th{text-align:left;color:var(--sub);font-weight:600;font-size:11px;text-transform:uppercase;padding:8px 10px;border-bottom:1px solid var(--line);white-space:nowrap;cursor:pointer}
 th:hover{color:var(--gold)}
-td{padding:9px 10px;border-bottom:1px solid var(--line);white-space:nowrap}
+td{padding:9px 10px;border-bottom:1px solid #202836;white-space:nowrap}
 tr:hover td{background:var(--panel2)}
-.rk th{cursor:default}.rk th:hover{color:var(--sub)}
-.rk td.rank{color:var(--faint);font-weight:700;width:28px}
-.rk td.lbl{max-width:200px;overflow:hidden;text-overflow:ellipsis}
-.score{display:inline-block;min-width:38px;text-align:center;padding:2px 8px;border-radius:20px;font-weight:700;font-size:11px}
-.score.good{background:rgba(46,217,163,.14);color:var(--green)}
-.score.bad{background:rgba(255,93,108,.14);color:var(--red)}
-.card,.kpi,.filters{background:#FFFFFF;box-shadow:0 6px 22px -10px rgba(60,70,120,.22)}
 .foot-note{margin-top:26px;font-size:11.5px;color:var(--faint);line-height:1.6}
 </style>
 </head>
 <body>
 <div class="wrap">
-<header class="top">
-  <div class="brand"><div class="mark">TR</div><div><h1>Meta Performance Console</h1><p>Aurum (Meta) marketing performance dashboard</p></div></div>
-  <div class="actions">
-    <input type="file" id="fileInput" accept=".xlsx,.csv">
-    <button class="primary" onclick="document.getElementById('fileInput').click()">Upload File</button>
-    <button class="ghost" id="btnRefresh" onclick="refreshData()" disabled>Refresh Data</button>
-    <button class="ghost" id="btnReset" onclick="resetDashboard()" disabled>Reset Dashboard</button>
-    <button class="ghost" id="btnDelete" onclick="deleteData()" disabled>Delete Data</button>
-  </div>
-</header>
-<div class="status" id="statusBox"></div>
-<div class="filters" id="filterBar" style="display:none;">
-  <div class="f-field"><label>Start Date</label><input type="date" id="fStart"></div>
-  <div class="f-field"><label>End Date</label><input type="date" id="fEnd"></div>
-  <div class="f-field"><label>Module ID</label><select id="fModule"><option value="">All</option></select></div>
-  <div class="f-field"><label>Campaign</label><select id="fCampaign"><option value="">All</option></select></div>
-  <div class="f-field"><label>Audience</label><select id="fAudience"><option value="">All</option></select></div>
-  <div class="f-field"><label>Creative</label><select id="fCreative"><option value="">All</option></select></div>
-  <div class="f-field" id="platformFieldWrap" style="display:none;"><label>Platform</label><select id="fPlatform"><option value="">All</option></select></div>
-  <div class="f-btns"><button class="primary" onclick="applyFilters()">Apply Filters</button><button class="ghost" onclick="clearFilters()">Clear Filters</button></div>
-</div>
-<div class="empty" id="emptyState"><h2>No data loaded</h2><p>Upload the Tata Realty performance export (.xlsx or .csv) to populate the console. Required columns: Day, Impressions, Amount spent, Clicks (all), Leads.</p></div>
+  <header class="top">
+    <div class="brand"><div class="mark">TR</div><div><h1>Orbis Performance Console</h1><p>Premium marketing performance dashboard</p></div></div>
+    <div class="actions">
+      <input type="file" id="fileInput" accept=".xlsx,.csv">
+      <button class="primary" id="btnUpload" style="display:none" onclick="document.getElementById('fileInput').click()">Upload File</button>
+      <button class="ghost" id="btnRefresh" onclick="refreshData()" disabled>Refresh Data</button>
+      <button class="ghost" id="btnReset" onclick="clearFilters()" disabled>Reset Dashboard</button>
+      <button class="ghost" id="btnDelete" style="display:none" onclick="deleteData()" disabled>Delete Data</button>
+    </div>
+  </header>
+  <div class="status" id="statusBox"></div>
 
-<div id="dashArea" style="display:none;">
-  <div class="kpis" id="kpiGrid"></div>
-  <div class="tabs">
-    <div class="tab active" data-view="overview">Overall Performance</div>
-    <div class="tab" data-view="audience">Audience-wise Breakdown</div>
-    <div class="tab" data-view="creative">Creative-wise Breakdown</div>
-    <div class="tab" data-view="datewise">Date-wise Breakdown</div>
+  <div class="filters" id="filterBar" style="display:none;">
+    <div class="f-field"><label>Start Date</label><input type="date" id="fStart"></div>
+    <div class="f-field"><label>End Date</label><input type="date" id="fEnd"></div>
+    <div class="f-field"><label>Module ID</label><select id="fModule"><option value="">All</option></select></div>
+    <div class="f-field"><label>Campaign</label><select id="fCampaign"><option value="">All</option></select></div>
+    <div class="f-field"><label>Audience</label><select id="fAudience"><option value="">All</option></select></div>
+    <div class="f-field"><label>Creative</label><select id="fCreative"><option value="">All</option></select></div>
+    <div class="f-field" id="platformFieldWrap" style="display:none;"><label>Platform</label><select id="fPlatform"><option value="">All</option></select></div>
+    <div class="f-btns"><button class="primary" onclick="applyFilters()">Apply Filters</button><button class="ghost" onclick="clearFilters()">Clear Filters</button></div>
   </div>
 
-  <div class="view active" id="view-overview">
-    <div class="grid2eq">
-      <div class="card" style="--kc:var(--green)"><h3>Best Performing Creatives</h3><div class="sub">High CTR · Low CPL · Less Spend · High Leads</div>
-        <div class="tablewrap"><table class="rk" id="rkBestCre"><thead><tr><th>#</th><th>Creative</th><th>CTR%</th><th>CPL</th><th>Spend</th><th>Leads</th><th>Score</th></tr></thead><tbody></tbody></table></div></div>
-      <div class="card" style="--kc:var(--red)"><h3>Top Non-Performing Creatives</h3><div class="sub">Low CTR · High CPL · High Spend · Less Leads</div>
-        <div class="tablewrap"><table class="rk" id="rkWorstCre"><thead><tr><th>#</th><th>Creative</th><th>CTR%</th><th>CPL</th><th>Spend</th><th>Leads</th><th>Score</th></tr></thead><tbody></tbody></table></div></div>
-    </div>
-    <div class="grid2eq">
-      <div class="card" style="--kc:var(--green)"><h3>Best Performing Audiences</h3><div class="sub">High CTR · Low CPL · Less Spend · High Leads</div>
-        <div class="tablewrap"><table class="rk" id="rkBestAud"><thead><tr><th>#</th><th>Audience</th><th>CTR%</th><th>CPL</th><th>Spend</th><th>Leads</th><th>Score</th></tr></thead><tbody></tbody></table></div></div>
-      <div class="card" style="--kc:var(--red)"><h3>Top Non-Performing Audiences</h3><div class="sub">Low CTR · High CPL · High Spend · Less Leads</div>
-        <div class="tablewrap"><table class="rk" id="rkWorstAud"><thead><tr><th>#</th><th>Audience</th><th>CTR%</th><th>CPL</th><th>Spend</th><th>Leads</th><th>Score</th></tr></thead><tbody></tbody></table></div></div>
-    </div>
-    <div class="grid2eq">
-      <div class="card" style="--kc:var(--teal)"><h3>Overall Performance</h3><div class="sub">Daily amount spent vs platform leads</div><div class="chartbox"><canvas id="chOverTime"></canvas></div></div>
-      <div class="card" style="--kc:var(--coral)"><h3>Top Campaigns by Spend</h3><div class="sub">Top 6 campaigns by amount spent</div><div class="chartbox"><canvas id="chTopCampaigns"></canvas></div></div>
-    </div>
+  <div class="empty" id="emptyState">
+    <h2 id="emptyTitle">Loading…</h2>
+    <p id="emptyMsg"></p>
   </div>
 
-  <div class="view" id="view-audience"><div class="card" style="--kc:var(--violet)"><h3>Audience-wise Detail</h3><div class="sub">Click a column header to sort. All figures reflect active filters.</div>
-    <div class="tablewrap"><table id="audienceTable"><thead><tr><th data-k="label">Audience</th><th data-k="impressions">Impr.</th><th data-k="reach">Reach</th><th data-k="clicks">Clicks</th><th data-k="spend">Spend (₹)</th><th data-k="leads">Leads</th><th data-k="cpl">CPL</th><th data-k="ctr">CTR%</th><th data-k="cpm">CPM</th></tr></thead><tbody></tbody></table></div></div></div>
-  <div class="view" id="view-creative"><div class="card" style="--kc:var(--sky)"><h3>Creative-wise Detail</h3><div class="sub">Click a column header to sort. All figures reflect active filters.</div>
-    <div class="tablewrap"><table id="creativeTable"><thead><tr><th data-k="label">Creative</th><th data-k="impressions">Impr.</th><th data-k="reach">Reach</th><th data-k="clicks">Clicks</th><th data-k="spend">Spend (₹)</th><th data-k="leads">Leads</th><th data-k="cpl">CPL</th><th data-k="ctr">CTR%</th><th data-k="cpm">CPM</th></tr></thead><tbody></tbody></table></div></div></div>
-  <div class="view" id="view-datewise"><div class="card" style="--kc:var(--lime)"><h3>Date-wise Detail</h3><div class="sub">Click a column header to sort. All figures reflect active filters.</div>
-    <div class="tablewrap"><table id="datewiseTable"><thead><tr><th data-k="label">Date</th><th data-k="impressions">Impr.</th><th data-k="reach">Reach</th><th data-k="clicks">Clicks</th><th data-k="spend">Spend (₹)</th><th data-k="leads">Leads</th><th data-k="cpl">CPL</th><th data-k="ctr">CTR%</th><th data-k="cpm">CPM</th></tr></thead><tbody></tbody></table></div></div></div>
-</div>
-<div class="foot-note" id="footNote"></div>
+  <div id="dashArea" style="display:none;">
+    <div class="kpis" id="kpiGrid"></div>
+    <div class="tabs">
+      <div class="tab active" data-view="overview">Overall Performance</div>
+      <div class="tab" data-view="audience">Audience-wise Breakdown</div>
+      <div class="tab" data-view="creative">Creative-wise Breakdown</div>
+      <div class="tab" data-view="datewise">Date-wise Breakdown</div>
+    </div>
+    <div class="view active" id="view-overview">
+      <div class="grid2">
+        <div class="card" style="--kc:var(--teal)"><h3>Spend &amp; Leads Over Time</h3><div class="sub">Daily amount spent vs platform leads</div><div class="chartbox"><canvas id="chOverTime"></canvas></div></div>
+        <div class="card" style="--kc:var(--violet)"><h3>Audience Mix</h3><div class="sub">Share of leads by audience</div><div class="chartbox"><canvas id="chAudience"></canvas></div></div>
+      </div>
+      <div class="grid3" style="margin-top:14px;">
+        <div class="card" style="--kc:var(--coral)"><h3>Top Campaigns by Spend</h3><div class="chartbox" style="height:220px;"><canvas id="chTopCampaigns"></canvas></div></div>
+        <div class="card" style="--kc:var(--sky)"><h3>Creative Performance</h3><div class="chartbox" style="height:220px;"><canvas id="chCreative"></canvas></div></div>
+        <div class="card" style="--kc:var(--amber)"><h3>CPL by Module</h3><div class="chartbox" style="height:220px;"><canvas id="chModule"></canvas></div></div>
+      </div>
+    </div>
+    <div class="view" id="view-audience"><div class="card" style="--kc:var(--violet)"><h3>Audience-wise Detail</h3><div class="sub">Click a column header to sort. All figures reflect active filters.</div>
+      <div class="tablewrap"><table id="audienceTable"><thead><tr><th data-k="label">Audience</th><th data-k="impressions">Impr.</th><th data-k="reach">Reach</th><th data-k="clicks">Clicks</th><th data-k="spend">Spend (₹)</th><th data-k="leads">Leads</th><th data-k="cpl">CPL</th><th data-k="ctr">CTR%</th><th data-k="cpm">CPM</th></tr></thead><tbody></tbody></table></div></div></div>
+    <div class="view" id="view-creative"><div class="card" style="--kc:var(--sky)"><h3>Creative-wise Detail</h3><div class="sub">Click a column header to sort. All figures reflect active filters.</div>
+      <div class="tablewrap"><table id="creativeTable"><thead><tr><th data-k="label">Creative</th><th data-k="impressions">Impr.</th><th data-k="reach">Reach</th><th data-k="clicks">Clicks</th><th data-k="spend">Spend (₹)</th><th data-k="leads">Leads</th><th data-k="cpl">CPL</th><th data-k="ctr">CTR%</th><th data-k="cpm">CPM</th></tr></thead><tbody></tbody></table></div></div></div>
+    <div class="view" id="view-datewise"><div class="card" style="--kc:var(--lime)"><h3>Date-wise Detail</h3><div class="sub">Click a column header to sort. All figures reflect active filters.</div>
+      <div class="tablewrap"><table id="datewiseTable"><thead><tr><th data-k="label">Date</th><th data-k="impressions">Impr.</th><th data-k="reach">Reach</th><th data-k="clicks">Clicks</th><th data-k="spend">Spend (₹)</th><th data-k="leads">Leads</th><th data-k="cpl">CPL</th><th data-k="ctr">CTR%</th><th data-k="cpm">CPM</th></tr></thead><tbody></tbody></table></div></div></div>
+  </div>
+  <div class="foot-note" id="footNote"></div>
 </div>
 
 <script>
-let RAW=[],FILTERED=[],COLMAP={};
+let RAW=[],FILTERED=[],COLMAP={},META=null,DB=null,CAN_WRITE=false,SHARED=false,curVersion=null;
 const REQUIRED=['date','impressions','spend','clicks','leads'];
-const ALIASES={date:['day','date','reporting starts'],campaign:['campaign name','campaign'],moduleId:['module id','moduleid'],audience:['audience'],creative:['creative'],platform:['platform'],impressions:['impressions'],reach:['reach'],spend:['amount spent (inr)','amount spent','spend'],clicks:['clicks (all)','clicks'],leads:['leads','platform leads'],postEng:['post engagements','postengagements']};
+const ALIASES={date:['day','date','reporting starts'],campaign:['campaign name','campaign'],moduleId:['module id','moduleid'],audience:['audience'],creative:['creative'],platform:['platform'],executive:['executive name'],impressions:['impressions'],reach:['reach'],spend:['amount spent (inr)','amount spent','spend'],clicks:['clicks (all)','clicks'],leads:['leads','platform leads'],postEng:['post engagements','postengagements']};
 const charts={};
-const LS='orbis_data_v1';
-function lsSet(k,v){try{localStorage.setItem(k,v)}catch(e){}}
-function lsGet(k){try{return localStorage.getItem(k)}catch(e){return null}}
-function lsDel(k){try{localStorage.removeItem(k)}catch(e){}}
-const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
-function showStatus(msg,ok){const b=document.getElementById('statusBox');b.className='status show '+(ok?'ok':'err');b.innerHTML=(ok?'&#10003; ':'&#9888; ')+msg}
-function buildColMap(h){const map={},n=h.map(x=>String(x||'').trim().toLowerCase());for(const k in ALIASES){for(const a of ALIASES[k]){const i=n.indexOf(a);if(i>-1){map[k]=h[i];break}}}return map}
+const CHUNK=800;
+
+function showStatus(msg,ok){const b=document.getElementById('statusBox');b.className='status show '+(ok?'ok':'err');b.innerHTML=(ok?'&#10003; ':'&#9888; ')+msg;}
+function normHeader(h){return String(h||'').trim().toLowerCase();}
+function buildColMap(headers){const map={},normed=headers.map(normHeader);
+  for(const key in ALIASES){for(const a of ALIASES[key]){const i=normed.indexOf(a);if(i>-1){map[key]=headers[i];break;}}}return map;}
 function parseDate(v){
   if(v instanceof Date&&!isNaN(v))return v;
-  if(typeof v==='number'){const d=new Date(Math.round((v-25569)*86400*1000));return isNaN(d)?null:d}
-  if(typeof v==='string'){const s=v.trim();const m=s.match(/^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{2,4})$/);
-    if(m){let y=m[3];if(y.length===2)y='20'+y;const d=new Date(+y,+m[2]-1,+m[1]);if(!isNaN(d))return d}
-    const d2=new Date(s);if(!isNaN(d2))return d2}
-  return null}
-const num=v=>{const n=parseFloat(v);return isNaN(n)?0:n};
-const fmtInt=n=>Math.round(n).toLocaleString('en-IN');
-const fmtMoney=n=>isFinite(n)?'₹'+n.toLocaleString('en-IN',{maximumFractionDigits:2}):'—';
-const fmtNum=(n,d)=>isFinite(n)?n.toLocaleString('en-IN',{maximumFractionDigits:d??2}):'—';
-const safeDiv=(a,b)=>b>0?a/b:NaN;
+  if(typeof v==='number'){const d=new Date(Math.round((v-25569)*86400*1000));return isNaN(d)?null:d;}
+  if(typeof v==='string'){const s=v.trim();let m=s.match(/^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{2,4})$/);
+    if(m){let a=m[1],b=m[2],y=m[3];if(y.length===2)y='20'+y;const d=new Date(+y,+b-1,+a);if(!isNaN(d))return d;}
+    const d2=new Date(s);if(!isNaN(d2))return d2;}
+  return null;}
+function num(v){const n=parseFloat(v);return isNaN(n)?0:n;}
+function fmtInt(n){return Math.round(n).toLocaleString('en-IN');}
+function fmtMoney(n){return isFinite(n)?'₹'+n.toLocaleString('en-IN',{maximumFractionDigits:2}):'—';}
+function fmtNum(n,d){return isFinite(n)?n.toLocaleString('en-IN',{maximumFractionDigits:d??2}):'—';}
+function safeDiv(a,b){return b>0?a/b:NaN;}
+
+/* ---------- File upload (editors only) ---------- */
 function handleFile(file){
-  if(file.name.toLowerCase().endsWith('.csv')){Papa.parse(file,{complete:r=>processRows(r.data),error:e=>showStatus('Could not read CSV: '+e.message,false)})}
-  else{const rd=new FileReader();rd.onload=e=>{let rows;try{const wb=XLSX.read(new Uint8Array(e.target.result),{type:'array',cellDates:true});rows=XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]],{header:1,raw:true,defval:null})}catch(err){showStatus('Could not read Excel file: '+err.message,false);return}processRows(rows)};rd.onerror=()=>showStatus('Failed to load file.',false);rd.readAsArrayBuffer(file)}}
-function processRows(rows){
+  const name=file.name.toLowerCase();
+  if(name.endsWith('.csv')){Papa.parse(file,{complete:r=>processRows(r.data,file.name),error:e=>showStatus('Could not read CSV: '+e.message,false)});}
+  else{const reader=new FileReader();
+    reader.onload=e=>{let rows;try{const wb=XLSX.read(new Uint8Array(e.target.result),{type:'array',cellDates:true});
+      rows=XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]],{header:1,raw:true,defval:null});}
+      catch(err){showStatus('Could not read Excel file: '+err.message,false);return;}
+      processRows(rows,file.name);};
+    reader.onerror=()=>showStatus('Failed to load file.',false);reader.readAsArrayBuffer(file);}
+}
+
+async function processRows(rows,fileName){
   rows=rows.filter(r=>r&&r.length&&r.some(c=>c!==null&&c!==''));
-  if(rows.length<2){showStatus('File appears empty or unreadable.',false);return}
+  if(rows.length<2){showStatus('File appears empty or unreadable.',false);return;}
   const headers=rows[0].map(h=>String(h||'').trim());
-  COLMAP=buildColMap(headers);
-  const missing=REQUIRED.filter(k=>!COLMAP[k]);
-  if(missing.length){showStatus('Upload failed — missing required column(s): '+missing.join(', ')+'. Check the source file headers and try again.',false);return}
-  const idx={};for(const k in COLMAP)idx[k]=headers.indexOf(COLMAP[k]);
+  const cm=buildColMap(headers);
+  const missing=REQUIRED.filter(k=>!cm[k]);
+  if(missing.length){showStatus('Upload failed — missing required column(s): '+missing.join(', ')+'. Check the source file headers and try again.',false);return;}
+  const idx={};for(const k in cm)idx[k]=headers.indexOf(cm[k]);
   const out=[];
   for(let i=1;i<rows.length;i++){const r=rows[i];if(!r)continue;const date=parseDate(r[idx.date]);if(!date)continue;
-    out.push({date,campaign:r[idx.campaign]||'—',moduleId:idx.moduleId>-1?String(r[idx.moduleId]??'—'):'—',audience:r[idx.audience]||'—',creative:r[idx.creative]||'—',platform:idx.platform>-1?(r[idx.platform]||'—'):null,impressions:num(r[idx.impressions]),reach:num(r[idx.reach]),spend:num(r[idx.spend]),clicks:num(r[idx.clicks]),leads:num(r[idx.leads]),postEng:idx.postEng>-1?num(r[idx.postEng]):0})}
-  if(!out.length){showStatus('No valid data rows found (check the date column).',false);return}
-  RAW=out;
-  lsSet(LS,JSON.stringify(out.map(o=>({...o,date:o.date.toISOString()}))));
-  const hasP=!!COLMAP.platform;
-  document.getElementById('platformFieldWrap').style.display=hasP?'flex':'none';
-  let msg=fmtInt(out.length)+' records loaded.';if(!hasP)msg+=' Note: no Platform column found in this file — that filter is hidden.';
-  showStatus(msg,true);
-  showDash();populateFilters(true);applyFilters();updateFootNote()}
-function showDash(){
+    out.push({date,campaign:r[idx.campaign]||'—',moduleId:idx.moduleId>-1?String(r[idx.moduleId]??'—'):'—',audience:r[idx.audience]||'—',creative:r[idx.creative]||'—',
+      platform:idx.platform>-1?(r[idx.platform]||'—'):null,impressions:num(r[idx.impressions]),reach:num(r[idx.reach]),spend:num(r[idx.spend]),clicks:num(r[idx.clicks]),leads:num(r[idx.leads]),postEng:idx.postEng>-1?num(r[idx.postEng]):0});}
+  if(!out.length){showStatus('No valid data rows found (check the date column).',false);return;}
+  const meta={fileName,hasPlatform:!!cm.platform,mapped:Object.keys(cm).length,count:out.length,uploadedAt:Date.now()};
+  if(SHARED){
+    showStatus('Publishing dataset for everyone…',true);
+    try{await saveShared(out,meta);}catch(e){showStatus('Could not save shared data: '+(e&&e.message||e.code||e),false);return;}
+    // the snapshot listener will render for everyone, including this editor
+  }else{
+    curVersion=null;setDataset(out,meta);
+    showStatus(fmtInt(out.length)+' records loaded (local only — shared storage is unavailable here).',true);
+  }
+}
+
+/* ---------- Shared storage ---------- */
+const toArr=o=>[o.date.getTime(),o.campaign,o.moduleId,o.audience,o.creative,o.platform,o.impressions,o.reach,o.spend,o.clicks,o.leads,o.postEng];
+const fromArr=a=>({date:new Date(a[0]),campaign:a[1],moduleId:a[2],audience:a[3],creative:a[4],platform:a[5],impressions:a[6],reach:a[7],spend:a[8],clicks:a[9],leads:a[10],postEng:a[11]});
+
+async function saveShared(rows,meta){
+  const version=Date.now();const n=Math.ceil(rows.length/CHUNK);
+  for(let i=0;i<n;i++)await DB.doc('dash/c'+i).set({v:version,rows:rows.slice(i*CHUNK,(i+1)*CHUNK).map(toArr)});
+  const old=META?META.chunks:0;
+  await DB.doc('dash/meta').set({...meta,version,chunks:n});          // meta last → viewers switch only when data is complete
+  for(let i=n;i<old;i++){try{await DB.doc('dash/c'+i).delete();}catch(e){}}
+}
+
+async function loadShared(m){
+  const all=[];
+  for(let i=0;i<m.chunks;i++){const s=await DB.doc('dash/c'+i).get();if(!s.exists)throw new Error('data still syncing');all.push(...s.data().rows);}
+  return all.map(fromArr);
+}
+
+async function onMeta(snap){
+  if(!snap.exists){META=null;curVersion=null;RAW=[];FILTERED=[];showEmpty();return;}
+  const m=snap.data();if(m.version===curVersion)return;
+  try{const rows=await loadShared(m);curVersion=m.version;META=m;setDataset(rows,m);
+    showStatus(fmtInt(rows.length)+' records loaded'+(m.fileName?' from “'+m.fileName+'”':'')+'.',true);}
+  catch(e){showStatus('Could not load shared data: '+(e&&e.message||e),false);}
+}
+
+function showEmpty(){
+  document.getElementById('filterBar').style.display='none';document.getElementById('dashArea').style.display='none';
+  document.getElementById('emptyState').style.display='block';
+  document.getElementById('emptyTitle').textContent='No data loaded';
+  document.getElementById('emptyMsg').textContent=CAN_WRITE?'Upload the Tata Realty performance export (.xlsx or .csv). Everyone who opens this dashboard will see it. Required columns: Day, Impressions, Amount spent, Clicks (all), Leads.':'The dashboard owner has not published any data yet. Please check back soon.';
+  ['btnRefresh','btnReset','btnDelete'].forEach(id=>document.getElementById(id).disabled=true);
+  document.getElementById('footNote').textContent='';
+}
+
+function setDataset(rows,meta){
+  RAW=rows;COLMAP={platform:meta.hasPlatform?'Platform':null};
+  document.getElementById('platformFieldWrap').style.display=meta.hasPlatform?'flex':'none';
   ['btnRefresh','btnReset','btnDelete'].forEach(id=>document.getElementById(id).disabled=false);
+  populateFilters(true);
   document.getElementById('filterBar').style.display='flex';
   document.getElementById('emptyState').style.display='none';
-  document.getElementById('dashArea').style.display='block'}
-const uniqueSorted=a=>[...new Set(a.filter(v=>v!==null&&v!==undefined&&v!=='—'))].sort();
-function fillSelect(id,vals,keep){const s=document.getElementById(id),cur=keep?s.value:'';s.innerHTML='<option value="">All</option>'+vals.map(v=>`<option value="${esc(v)}">${esc(v)}</option>`).join('');if(cur&&vals.includes(cur))s.value=cur}
+  document.getElementById('dashArea').style.display='block';
+  applyFilters();
+  const when=meta.uploadedAt?new Date(meta.uploadedAt).toLocaleString('en-IN'):'';
+  document.getElementById('footNote').textContent=`${RAW.length.toLocaleString('en-IN')} total records · ${meta.mapped||''} fields mapped · ${SHARED?'shared view — everyone sees the same published dataset':'local view only'}${when?' · last updated '+when:''}.`;
+}
+
+async function deleteData(){
+  if(!CAN_WRITE)return;
+  if(!confirm('Delete the published dataset for everyone? This cannot be undone.'))return;
+  if(SHARED){
+    try{const n=META?META.chunks:0;await DB.doc('dash/meta').delete();for(let i=0;i<n;i++){try{await DB.doc('dash/c'+i).delete();}catch(e){}}}
+    catch(e){showStatus('Could not delete: '+(e&&e.message||e),false);return;}
+  }else{RAW=[];showEmpty();}
+  document.getElementById('fileInput').value='';showStatus('Dataset deleted.',true);
+}
+
+async function refreshData(){
+  if(SHARED&&META){try{const s=await DB.doc('dash/meta').get();if(s.exists){curVersion=null;await onMeta(s);return;}}catch(e){}}
+  applyFilters();showStatus('Dashboard refreshed.',true);
+}
+
+/* ---------- Filters ---------- */
+function uniqueSorted(arr){return [...new Set(arr.filter(v=>v!==null&&v!==undefined&&v!=='—'))].sort();}
+function fillSelect(id,values,keep){const sel=document.getElementById(id),cur=keep?sel.value:'';
+  sel.innerHTML='<option value="">All</option>'+values.map(v=>`<option value="${String(v).replace(/"/g,'&quot;')}">${v}</option>`).join('');if(cur&&values.includes(cur))sel.value=cur;}
 function populateFilters(reset){
-  if(reset){const ds=RAW.map(r=>+r.date);document.getElementById('fStart').value=new Date(Math.min(...ds)).toISOString().slice(0,10);document.getElementById('fEnd').value=new Date(Math.max(...ds)).toISOString().slice(0,10)}
-  const st=document.getElementById('fStart').value,en=document.getElementById('fEnd').value;
-  const sc=RAW.filter(r=>(!st||r.date>=new Date(st))&&(!en||r.date<=new Date(en+'T23:59:59')));
-  const mod=document.getElementById('fModule').value,camp=document.getElementById('fCampaign').value;
-  const s2=sc.filter(r=>!mod||r.moduleId===mod);
-  fillSelect('fModule',uniqueSorted(sc.map(r=>r.moduleId)),true);
+  const dates=RAW.map(r=>+r.date);
+  if(reset){document.getElementById('fStart').value=new Date(Math.min(...dates)).toISOString().slice(0,10);document.getElementById('fEnd').value=new Date(Math.max(...dates)).toISOString().slice(0,10);}
+  const start=document.getElementById('fStart').value,end=document.getElementById('fEnd').value;
+  const scoped=RAW.filter(r=>(!start||r.date>=new Date(start))&&(!end||r.date<=new Date(end+'T23:59:59')));
+  const modSel=document.getElementById('fModule').value,campSel=document.getElementById('fCampaign').value;
+  const s2=scoped.filter(r=>!modSel||r.moduleId===modSel);
+  fillSelect('fModule',uniqueSorted(scoped.map(r=>r.moduleId)),true);
   fillSelect('fCampaign',uniqueSorted(s2.map(r=>r.campaign)),true);
-  const s3=s2.filter(r=>!camp||r.campaign===camp);
+  const s3=s2.filter(r=>!campSel||r.campaign===campSel);
   fillSelect('fAudience',uniqueSorted(s3.map(r=>r.audience)),true);
   fillSelect('fCreative',uniqueSorted(s3.map(r=>r.creative)),true);
-  if(COLMAP.platform)fillSelect('fPlatform',uniqueSorted(s3.map(r=>r.platform)),true)}
+  if(COLMAP.platform)fillSelect('fPlatform',uniqueSorted(s3.map(r=>r.platform)),true);
+}
 function applyFilters(){
   const g=id=>document.getElementById(id).value;
-  const st=g('fStart'),en=g('fEnd'),mod=g('fModule'),camp=g('fCampaign'),aud=g('fAudience'),cre=g('fCreative'),plat=COLMAP.platform?g('fPlatform'):'';
-  FILTERED=RAW.filter(r=>(!st||r.date>=new Date(st))&&(!en||r.date<=new Date(en+'T23:59:59'))&&(!mod||r.moduleId===mod)&&(!camp||r.campaign===camp)&&(!aud||r.audience===aud)&&(!cre||r.creative===cre)&&(!plat||r.platform===plat));
-  populateFilters(false);renderAll()}
-function clearFilters(){populateFilters(true);['fModule','fCampaign','fAudience','fCreative'].forEach(id=>document.getElementById(id).value='');if(COLMAP.platform)document.getElementById('fPlatform').value='';applyFilters()}
-function resetDashboard(){clearFilters()}
-function deleteData(){
-  if(!confirm('Delete the uploaded dataset? This cannot be undone.'))return;
-  RAW=[];FILTERED=[];COLMAP={};lsDel(LS);
-  document.getElementById('filterBar').style.display='none';document.getElementById('dashArea').style.display='none';document.getElementById('emptyState').style.display='block';
-  ['btnRefresh','btnReset','btnDelete'].forEach(id=>document.getElementById(id).disabled=true);
-  document.getElementById('fileInput').value='';showStatus('Dataset deleted.',true);document.getElementById('footNote').textContent=''}
-function refreshData(){applyFilters();showStatus('Dashboard refreshed.',true)}
-function agg(rows){const s={impressions:0,reach:0,spend:0,clicks:0,leads:0,postEng:0};rows.forEach(r=>{for(const k in s)s[k]+=r[k]});return s}
-const KPI_COLORS=['#F5A800','#1E9FD0','#F0596B','#5DB33A','#7C4DFF','#E0489A','#12A89A','#E8843A','#3B6FB6','#0FAE7E','#F0596B'];
+  const start=g('fStart'),end=g('fEnd'),mod=g('fModule'),camp=g('fCampaign'),aud=g('fAudience'),cre=g('fCreative'),plat=COLMAP.platform?g('fPlatform'):'';
+  FILTERED=RAW.filter(r=>(!start||r.date>=new Date(start))&&(!end||r.date<=new Date(end+'T23:59:59'))&&(!mod||r.moduleId===mod)&&(!camp||r.campaign===camp)&&(!aud||r.audience===aud)&&(!cre||r.creative===cre)&&(!plat||r.platform===plat));
+  populateFilters(false);renderAll();
+}
+function clearFilters(){
+  ['fModule','fCampaign','fAudience','fCreative'].forEach(id=>document.getElementById(id).value='');
+  if(COLMAP.platform)document.getElementById('fPlatform').value='';
+  populateFilters(true);applyFilters();
+}
+
+/* ---------- Aggregation & rendering ---------- */
+function agg(rows){const s={impressions:0,reach:0,spend:0,clicks:0,leads:0,postEng:0};rows.forEach(r=>{for(const k in s)s[k]+=r[k];});return s;}
+const KPI_COLORS=['#FFC145','#3FC1E9','#FF6B6B','#8CD867','#9B6BFF','#FF6FB5','#2EC4B6','#F4A259','#5A8FC7','#2ED9A3','#FF6B6B'];
 let kci=0;
-function kpiCard(label,val,tip,trend){
-  const c=KPI_COLORS[kci++%KPI_COLORS.length];
+function kpiCard(label,val,tip,trend){const c=KPI_COLORS[kci++%KPI_COLORS.length];
   const t=trend!=null?`<div class="trend ${trend>0?'up':trend<0?'down':''}">${trend>0?'▲':trend<0?'▼':'—'} ${Math.abs(trend).toFixed(1)}% vs prior period</div>`:'';
-  return `<div class="kpi" style="--kc:${c}"><div class="lbl">${label} <span class="q" title="${tip}">?</span></div><div class="val">${val}</div>${t}</div>`}
-function priorPeriodRows(){
-  const st=document.getElementById('fStart').value,en=document.getElementById('fEnd').value;if(!st||!en)return[];
-  const s=new Date(st),e=new Date(en),span=e-s,ps=new Date(s.getTime()-span-86400000),pe=new Date(s.getTime()-86400000);
-  return RAW.filter(r=>r.date>=ps&&r.date<=pe)}
-const pct=(c,p)=>p>0?((c-p)/p*100):null;
+  return `<div class="kpi" style="--kc:${c}"><div class="lbl">${label} <span class="q" title="${tip}">?</span></div><div class="val">${val}</div>${t}</div>`;}
+function priorPeriodRows(){const start=document.getElementById('fStart').value,end=document.getElementById('fEnd').value;if(!start||!end)return[];
+  const s=new Date(start),e=new Date(end),span=e-s,ps=new Date(s.getTime()-span-86400000),pe=new Date(s.getTime()-86400000);return RAW.filter(r=>r.date>=ps&&r.date<=pe);}
+function pct(c,p){return p>0?((c-p)/p*100):null;}
 function renderKPIs(){
   kci=0;const s=agg(FILTERED),cpl=safeDiv(s.spend,s.leads),ctr=safeDiv(s.clicks,s.impressions)*100,cpm=safeDiv(s.spend,s.impressions)*1000,cpc=safeDiv(s.spend,s.clicks),freq=safeDiv(s.impressions,s.reach),p=agg(priorPeriodRows());
   document.getElementById('kpiGrid').innerHTML=[
@@ -235,66 +296,58 @@ function renderKPIs(){
     kpiCard('CTR',isFinite(ctr)?fmtNum(ctr,2)+'%':'—','Click-through rate = Clicks ÷ Impressions × 100.'),
     kpiCard('CPM',isFinite(cpm)?fmtMoney(cpm):'—','Cost per 1,000 impressions.'),
     kpiCard('CPC',isFinite(cpc)?fmtMoney(cpc):'—','Cost per Click = Amount Spent ÷ Clicks.'),
-    kpiCard('Frequency',isFinite(freq)?fmtNum(freq,2):'—','Average number of times each person saw the ad.')].join('')}
-function groupBy(rows,key){const m=new Map();rows.forEach(r=>{let k=r[key];if(k instanceof Date)k=k.toISOString().slice(0,10);if(!m.has(k))m.set(k,[]);m.get(k).push(r)});return m}
-function barChart(id,labels,data,horizontal){
-  if(charts[id]){charts[id].destroy();delete charts[id]}
-  charts[id]=new Chart(document.getElementById(id),{type:'bar',data:{labels,datasets:[{data,backgroundColor:'#7C4DFF',borderRadius:4}]},
-    options:{responsive:true,maintainAspectRatio:false,indexAxis:horizontal?'y':'x',scales:{x:{ticks:{color:'#667089'},grid:{color:'#E8ECF4'}},y:{ticks:{color:'#667089'},grid:{color:'#E8ECF4'}}},plugins:{legend:{display:false}}}})}
-
-function scoreEntities(rows,key){
-  const list=[...groupBy(rows,key).entries()].filter(([k])=>k!=='—').map(([k,rs])=>{const s=agg(rs);return{label:k,impressions:s.impressions,spend:s.spend,leads:s.leads,ctr:safeDiv(s.clicks,s.impressions)*100,cpl:safeDiv(s.spend,s.leads)}}).filter(e=>e.impressions>0);
-  const n=list.length;
-  const rankMetric=(m,hb)=>{
-    const vals=list.map(e=>{const v=e[m];return isFinite(v)?v:(m==='cpl'?Infinity:0)});
-    list.forEach((e,i)=>{let below=0,equal=0;vals.forEach(v=>{if(v<vals[i])below++;else if(v===vals[i])equal++});
-      const p=n>1?(below+(equal-1)/2)/(n-1):0.5;e['s_'+m]=hb?p:1-p})};
-  rankMetric('ctr',true);rankMetric('cpl',false);rankMetric('spend',false);rankMetric('leads',true);
-  list.forEach(e=>e.score=(e.s_ctr+e.s_cpl+e.s_spend+e.s_leads)/4);
-  return list}
-function renderRank(tableId,list,worst){
-  const sorted=[...list].sort((a,b)=>worst?a.score-b.score:b.score-a.score).slice(0,5);
-  document.querySelector('#'+tableId+' tbody').innerHTML=sorted.map((e,i)=>`<tr><td class="rank">${i+1}</td><td class="lbl" title="${esc(e.label)}">${esc(e.label)}</td><td>${isFinite(e.ctr)?fmtNum(e.ctr,2):'—'}</td><td>${isFinite(e.cpl)?fmtMoney(e.cpl):'—'}</td><td>${fmtMoney(e.spend)}</td><td>${fmtInt(e.leads)}</td><td><span class="score ${worst?'bad':'good'}">${Math.round(e.score*100)}</span></td></tr>`).join('')||'<tr><td colspan="7" style="text-align:center;color:var(--sub);">No data for current filters.</td></tr>'}
+    kpiCard('Frequency',isFinite(freq)?fmtNum(freq,2):'—','Average number of times each person saw the ad.')].join('');}
+function groupBy(rows,key){const m=new Map();rows.forEach(r=>{let k=r[key];if(k instanceof Date)k=k.toISOString().slice(0,10);if(!m.has(k))m.set(k,[]);m.get(k).push(r);});return m;}
+function destroyChart(id){if(charts[id]){charts[id].destroy();delete charts[id];}}
+const PALETTE=['#FFC145','#3FC1E9','#FF6B6B','#8CD867','#9B6BFF','#FF6FB5','#2EC4B6','#F4A259'];
+const AX={ticks:{color:'#8B93A3'},grid:{color:'#222A38'}};
+function lineChart(id,labels,ds){destroyChart(id);charts[id]=new Chart(document.getElementById(id),{type:'line',data:{labels,datasets:ds.map((d,i)=>({...d,borderColor:PALETTE[i],backgroundColor:PALETTE[i]+'33',tension:.3,pointRadius:0,borderWidth:2}))},
+  options:{responsive:true,maintainAspectRatio:false,scales:{x:{ticks:{color:'#8B93A3',maxTicksLimit:8},grid:AX.grid},y:AX},plugins:{legend:{labels:{color:'#ECEFF4'}}}}});}
+function barChart(id,labels,data,h){destroyChart(id);charts[id]=new Chart(document.getElementById(id),{type:'bar',data:{labels,datasets:[{data,backgroundColor:PALETTE[0],borderRadius:4}]},
+  options:{responsive:true,maintainAspectRatio:false,indexAxis:h?'y':'x',scales:{x:AX,y:AX},plugins:{legend:{display:false}}}});}
+function doughnutChart(id,labels,data){destroyChart(id);charts[id]=new Chart(document.getElementById(id),{type:'doughnut',data:{labels,datasets:[{data,backgroundColor:PALETTE,borderColor:'#151B2C',borderWidth:2}]},
+  options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom',labels:{color:'#ECEFF4',boxWidth:10,font:{size:10}}}}}});}
+function fmtDateLabel(d){return new Date(d).toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'});}
 function renderOverview(){
-  const cre=scoreEntities(FILTERED,'creative'),aud=scoreEntities(FILTERED,'audience');
-  renderRank('rkBestCre',cre,false);renderRank('rkWorstCre',cre,true);renderRank('rkBestAud',aud,false);renderRank('rkWorstAud',aud,true);
   const byDate=groupBy(FILTERED,'date'),days=[...byDate.keys()].sort();
   lineChart('chOverTime',days.map(d=>fmtDateLabel(d).replace(/, \d{4}$/,'')),[{label:'Spend (₹)',data:days.map(d=>agg(byDate.get(d)).spend)},{label:'Leads',data:days.map(d=>agg(byDate.get(d)).leads)}]);
-  const te=[...groupBy(FILTERED,'campaign').entries()].map(([k,v])=>[k,agg(v).spend]).sort((a,b)=>b[1]-a[1]).slice(0,6);
-  barChart('chTopCampaigns',te.map(e=>String(e[0]).length>24?String(e[0]).slice(0,24)+'…':e[0]),te.map(e=>e[1]),true)}
-function lineChart(id,labels,ds){
-  if(charts[id]){charts[id].destroy();delete charts[id]}
-  const P=['#7C4DFF','#12A89A'];
-  charts[id]=new Chart(document.getElementById(id),{type:'line',data:{labels,datasets:ds.map((d,i)=>({...d,borderColor:P[i],backgroundColor:P[i]+'33',tension:.3,pointRadius:0,borderWidth:2}))},
-    options:{responsive:true,maintainAspectRatio:false,scales:{x:{ticks:{color:'#667089',maxTicksLimit:8},grid:{color:'#E8ECF4'}},y:{ticks:{color:'#667089'},grid:{color:'#E8ECF4'}}},plugins:{legend:{labels:{color:'#171B2E'}}}}})}
-
+  const aud=[...groupBy(FILTERED,'audience').entries()].map(([k,v])=>[k,agg(v).leads]).sort((a,b)=>b[1]-a[1]).slice(0,7);
+  doughnutChart('chAudience',aud.map(e=>e[0]),aud.map(e=>e[1]));
+  const camp=[...groupBy(FILTERED,'campaign').entries()].map(([k,v])=>[k,agg(v).spend]).sort((a,b)=>b[1]-a[1]).slice(0,6);
+  barChart('chTopCampaigns',camp.map(e=>e[0].length>24?e[0].slice(0,24)+'…':e[0]),camp.map(e=>e[1]),true);
+  const cre=[...groupBy(FILTERED,'creative').entries()].map(([k,v])=>[k,safeDiv(agg(v).spend,agg(v).leads)]).filter(e=>isFinite(e[1])).sort((a,b)=>a[1]-b[1]).slice(0,6);
+  barChart('chCreative',cre.map(e=>e[0].length>18?e[0].slice(0,18)+'…':e[0]),cre.map(e=>+e[1].toFixed(1)),true);
+  const mod=[...groupBy(FILTERED,'moduleId').entries()].map(([k,v])=>[k,safeDiv(agg(v).spend,agg(v).leads)]).filter(e=>isFinite(e[1]));
+  barChart('chModule',mod.map(e=>e[0]),mod.map(e=>+e[1].toFixed(1)),false);
+}
 const groupSortState={audienceTable:{k:'spend',dir:-1},creativeTable:{k:'spend',dir:-1},datewiseTable:{k:'label',dir:1}};
-function renderGroupTable(tableId,groupKey,fmtL){
-  let rows=[...groupBy(FILTERED,groupKey).entries()].map(([k,rs])=>{const s=agg(rs);return{label:k,impressions:s.impressions,reach:s.reach,clicks:s.clicks,spend:s.spend,leads:s.leads,cpl:safeDiv(s.spend,s.leads),ctr:safeDiv(s.clicks,s.impressions)*100,cpm:safeDiv(s.spend,s.impressions)*1000}});
-  const st=groupSortState[tableId],key=st.k;
-  rows.sort((a,b)=>{const x=a[key],y=b[key],nx=typeof x==='number'&&isNaN(x),ny=typeof y==='number'&&isNaN(y);if(nx||ny)return nx&&ny?0:nx?1:-1;return(x<y?-1:x>y?1:0)*st.dir});
-  document.querySelector('#'+tableId+' tbody').innerHTML=rows.map(r=>`<tr><td>${fmtL?fmtL(r.label):esc(r.label)}</td><td>${fmtInt(r.impressions)}</td><td>${fmtInt(r.reach)}</td><td>${fmtInt(r.clicks)}</td><td>${fmtMoney(r.spend)}</td><td>${fmtInt(r.leads)}</td><td>${isFinite(r.cpl)?fmtMoney(r.cpl):'—'}</td><td>${isFinite(r.ctr)?fmtNum(r.ctr,2):'—'}</td><td>${isFinite(r.cpm)?fmtMoney(r.cpm):'—'}</td></tr>`).join('')||'<tr><td colspan="9" style="text-align:center;color:var(--sub);">No rows match the current filters.</td></tr>'}
-const fmtDateLabel=d=>new Date(d).toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'});
-function renderAll(){renderKPIs();renderOverview();renderGroupTable('audienceTable','audience');renderGroupTable('creativeTable','creative');renderGroupTable('datewiseTable','date',fmtDateLabel)}
-function updateFootNote(){document.getElementById('footNote').textContent=`${RAW.length.toLocaleString('en-IN')} total records loaded · ${Object.keys(COLMAP).length} fields mapped from source columns · data stays in this browser only.`}
+function renderGroupTable(tableId,groupKey,fmt){
+  let rows=[...groupBy(FILTERED,groupKey).entries()].map(([k,rs])=>{const s=agg(rs);
+    return{label:k,impressions:s.impressions,reach:s.reach,clicks:s.clicks,spend:s.spend,leads:s.leads,cpl:safeDiv(s.spend,s.leads),ctr:safeDiv(s.clicks,s.impressions)*100,cpm:safeDiv(s.spend,s.impressions)*1000};});
+  const st=groupSortState[tableId];rows.sort((a,b)=>(a[st.k]<b[st.k]?-1:1)*st.dir);
+  document.querySelector('#'+tableId+' tbody').innerHTML=rows.map(r=>`<tr><td>${fmt?fmt(r.label):r.label}</td><td>${fmtInt(r.impressions)}</td><td>${fmtInt(r.reach)}</td><td>${fmtInt(r.clicks)}</td><td>${fmtMoney(r.spend)}</td><td>${fmtInt(r.leads)}</td><td>${isFinite(r.cpl)?fmtMoney(r.cpl):'—'}</td><td>${isFinite(r.ctr)?fmtNum(r.ctr,2):'—'}</td><td>${isFinite(r.cpm)?fmtMoney(r.cpm):'—'}</td></tr>`).join('')||'<tr><td colspan="9" style="text-align:center;color:var(--sub);">No rows match the current filters.</td></tr>';
+}
+function renderAll(){renderKPIs();renderOverview();renderGroupTable('audienceTable','audience');renderGroupTable('creativeTable','creative');renderGroupTable('datewiseTable','date',fmtDateLabel);}
 
+/* ---------- UI wiring ---------- */
 document.querySelectorAll('.tab').forEach(t=>t.addEventListener('click',()=>{
   document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));document.querySelectorAll('.view').forEach(x=>x.classList.remove('active'));
-  t.classList.add('active');document.getElementById('view-'+t.dataset.view).classList.add('active')}));
-const gtc={audienceTable:{key:'audience'},creativeTable:{key:'creative'},datewiseTable:{key:'date',fmt:fmtDateLabel}};
-document.querySelectorAll('#audienceTable th,#creativeTable th,#datewiseTable th').forEach(th=>{
-  const tid=th.closest('table').id;
-  th.addEventListener('click',()=>{const k=th.dataset.k,st=groupSortState[tid];st.dir=(st.k===k)?-st.dir:(k==='label'?1:-1);st.k=k;renderGroupTable(tid,gtc[tid].key,gtc[tid].fmt)})});
-document.getElementById('fileInput').addEventListener('change',e=>{if(e.target.files[0])handleFile(e.target.files[0])});
+  t.classList.add('active');document.getElementById('view-'+t.dataset.view).classList.add('active');}));
+const gcfg={audienceTable:{key:'audience'},creativeTable:{key:'creative'},datewiseTable:{key:'date',fmt:fmtDateLabel}};
+document.querySelectorAll('#audienceTable th,#creativeTable th,#datewiseTable th').forEach(th=>{const id=th.closest('table').id;
+  th.addEventListener('click',()=>{const k=th.dataset.k,st=groupSortState[id];st.dir=(st.k===k)?-st.dir:(k==='label'?1:-1);st.k=k;renderGroupTable(id,gcfg[id].key,gcfg[id].fmt);});});
+document.getElementById('fileInput').addEventListener('change',e=>{if(e.target.files[0])handleFile(e.target.files[0]);e.target.value='';});
 
-(function init(){
-  try{const saved=lsGet(LS);if(!saved)return;
-    RAW=JSON.parse(saved).map(o=>({...o,date:new Date(o.date)}));
-    COLMAP={date:'Day',campaign:'Campaign name',moduleId:'Module ID',audience:'Audience',creative:'Creative',platform:RAW.some(r=>r.platform!==null&&r.platform!==undefined)?'Platform':null,impressions:'Impressions',reach:'Reach',spend:'Amount spent (INR)',clicks:'Clicks (all)',leads:'Leads',postEng:'Post engagements'};
-    document.getElementById('platformFieldWrap').style.display=COLMAP.platform?'flex':'none';
-    showDash();populateFilters(true);applyFilters();updateFootNote();
-    showStatus('Restored previously uploaded dataset ('+fmtInt(RAW.length)+' records).',true)
-  }catch(e){}
+(async function init(){
+  // Who am I? Only editors/owner may upload or delete.
+  try{const user=window.claude?await claude.use('user'):null;CAN_WRITE=user?!!(await user.canEdit()):false;}catch(e){}
+  try{DB=window.claude?await claude.use('db'):null;}catch(e){DB=null;}
+  SHARED=!!DB;
+  if(!SHARED)CAN_WRITE=true; // no shared storage: fall back to a local-only session
+  document.getElementById('btnUpload').style.display=CAN_WRITE?'':'none';
+  document.getElementById('btnDelete').style.display=CAN_WRITE?'':'none';
+  if(SHARED){DB.doc('dash/meta').onSnapshot(onMeta,e=>{showStatus('Could not reach shared data: '+(e&&e.message||e.code||'error'),false);});}
+  else showEmpty();
 })();
 </script>
 </body>
